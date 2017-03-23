@@ -15,16 +15,16 @@ Quick start
 
 2.1. Generate a new module by using [tsardevel].
 
-    shell>`tsardevel php_fpm`
+    >tsardevel php_fpm
 
     Replace mod_php_fpm.c by (https://github.com/nilZhang/tsar-mod/tree/master/php_fpm)
 
-    shell> make
+    > make
 
-    shell> make install
+    > make install
 
 2.2 get module direct by https://github.com/nilZhang/tsar-mod/tree/master/php_fpm
-    shell > make clean && make && sudo make install && tsar -l --php-fpm
+     > make clean && make && sudo make install && tsar -l --php-fpm
 3. >`tsar --php-fpm`
 
 Configuration
@@ -45,11 +45,12 @@ env PHP_FPM_TSAR_URI
 
     #### modify env 
 
-	shell> export PHP_FPM_TSAR_HOST=192.168.0.1
+	> export PHP_FPM_TSAR_HOST=192.168.0.1
 
  
 2. Stub Status module must be included,and add configuration as below:
 
+    
     location = /php-fpm-status {
         access_log off;
         allow 127.0.0.1;
@@ -98,7 +99,7 @@ env PHP_FPM_TSAR_URI
 6. other
 
 
-curl -h"" "http://127.0.0.1/php-fpm-status" -v
+curl  "http://127.0.0.1/php-fpm-status" -v
 
 
 * About to connect() to 127.0.0.1 port 80 (#0)
