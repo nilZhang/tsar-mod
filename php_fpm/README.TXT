@@ -1,4 +1,104 @@
-curl "http://127.0.0.1/php-fpm-status" -v
+
+tsar-mod_php-fpm
+==============
+
+#php-fpm/tengine module for tsar
+
+Support read data from php-fpm by common socket or unix domain socket.
+
+
+Quick start
+-----------
+1. Install [tsar](http://code.taobao.org/p/tsar/src/).
+
+2. get module
+
+2.1. Generate a new module by using [tsardevel].
+
+    shell>`tsardevel php_fpm`
+
+    Replace mod_php_fpm.c by (https://github.com/nilZhang/tsar-mod/tree/master/php_fpm)
+
+    shell> make
+
+    shell> make install
+
+2.2 get module direct by https://github.com/nilZhang/tsar-mod/tree/master/php_fpm
+    shell > make clean && make && sudo make install && tsar -l --php-fpm
+3. >`tsar --php-fpm`
+
+Configuration
+-------------
+1. Default host is 127.0.0.1 and default port is 80. But we can change both (or one of) the host and port:
+
+evn PHP_FPM_TSAR_HOST
+
+   host = PHP_FPM_TSAR_HOST ?:'127.0.0.1'
+
+evn PHP_FPM_TSAR_PORT
+   
+   port = PHP_FPM_TSAR_PORT ?: 80
+
+env PHP_FPM_TSAR_URI
+
+    uri = PHP_FPM_TSAR_URI ?: "/php-fpm-status"
+
+    #### modify env 
+
+	shell> export PHP_FPM_TSAR_HOST=192.168.0.1
+
+ 
+2. Stub Status module must be included,and add configuration as below:
+
+    location = /php-fpm-status {
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
+
+        include        fastcgi_params;
+        fastcgi_pass   php_fpm_status_upstream;
+        fastcgi_param  SCRIPT_FILENAME  $fastcgi_script_name;
+    }
+
+    if you open assess_log ,then the access_log-xxx will have the log as after log.
+
+     127.0.0.1 - - [23/Mar/2017:16:35:30 +0800] "GET /php-fpm-status HTTP/1.0" 200 395 "-" "/1.9" "-" 0.003 "-" "CgALVdKI01j4sQAAxwEAAA--" "1tebjflet5ug4flu&1&uo" "-"
+
+3. We can also using unix domain socket, if we set PHP_FPM_TSAR_HOST to a filesystem path:
+
+    ####example: 
+    >`export PHP_FPM_TSAR_HOST=/tmp/php-fpm-tsar.sock`
+
+    php-fpm server(which includes the location /php-fpm-status) must also listen to the unix domain socket path
+   
+    >`listen unix:/tmp/php-fpm-tsar.sock;`
+
+4. The uri and server name sent to the php-fpm server can alse be changed:
+
+    ####example: 
+    >`export PHP_FPM_TSAR_SERVER_NAME=zhangzhong`
+
+    >`export PHP_FPM_TSAR_SERVER_NAME=/php-fpm-status`
+
+
+
+5. display 
+
+	shell >  tsar -l --php-fpm
+
+
+	Time              -----------------------------------------php-fpm----------------------------------------
+	Time              accept   queue    maxq    qlen    idle  active   total  mactiv  mreach   slowR     qps
+	23/03/17-16:44:17   9.00    0.00  104.00  128.00  811.00    1.00  812.00   13.7K    0.00    0.00    1.00
+	23/03/17-16:44:22  23.00    0.00  104.00  128.00  810.00    2.00  812.00   13.7K    0.00    0.00    4.00
+
+
+
+
+6. other
+
+
+curl -h"" "http://127.0.0.1/php-fpm-status" -v
 
 
 * About to connect() to 127.0.0.1 port 80 (#0)
@@ -10,7 +110,7 @@ curl "http://127.0.0.1/php-fpm-status" -v
 > Accept: */*
 >
 < HTTP/1.1 200 OK
-< Server: nginx
+< Server: php-fpm
 < Date: Thu, 23 Mar 2017 02:49:10 GMT
 < Content-Type: text/plain;charset=UTF-8
 < Transfer-Encoding: chunked
