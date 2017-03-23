@@ -78,7 +78,7 @@ static void init_nginx_host_info(struct hostinfo *p)
     p->uri = p->uri ? p->uri : "/nginx_status";
 
     p->server_name = getenv("NGX_TSAR_SERVER_NAME");
-    p->server_name = p->server_name ? p->server_name : "status.taobao.com";
+    p->server_name = p->server_name ? p->server_name : "zhangzhong";
 }
 
 
