@@ -17,41 +17,50 @@ Quick start
 
     >tsardevel php_fpm
 
-    Replace mod_php_fpm.c by (https://github.com/nilZhang/tsar-mod/tree/master/php_fpm)
+Replace mod\_php\_fpm.c by (https://github.com/nilZhang/tsar-mod/tree/master/php_fpm)
 
     > make
 
     > make install
 
-2.2 get module direct by https://github.com/nilZhang/tsar-mod/tree/master/php_fpm
-     > make clean && make && sudo make install && tsar -l --php-fpm
-3. >`tsar --php-fpm`
+2.2 get module direct by [tsar-php-fpm] (https://github.com/nilZhang/tsar-mod/tree/master/php_fpm)
+
+> make clean && make && sudo make install && tsar -l --php-fpm
+     
+3 show
+ 
+>`tsar --php-fpm`
 
 Configuration
 -------------
-1. Default host is 127.0.0.1 and default port is 80. But we can change both (or one of) the host and port:
+###1. Default host is 127.0.0.1 and default port is 80. But we can change both (or one of) the host and port, etc :
 
-evn PHP_FPM_TSAR_HOST
+>   evn PHP_FPM_TSAR_HOST
+> 
+>   host = PHP_FPM_TSAR_HOST ?:'127.0.0.1'
+>
+>   evn PHP_FPM_TSAR_PORT
+>   
+>   port = PHP_FPM_TSAR_PORT ?: 80
+>
+>   env PHP_FPM_TSAR_URI
+>
+>   uri = PHP_FPM_TSAR_URI ?: "/php-fpm-status"
+>
 
-   host = PHP_FPM_TSAR_HOST ?:'127.0.0.1'
+#### modify env 
 
-evn PHP_FPM_TSAR_PORT
-   
-   port = PHP_FPM_TSAR_PORT ?: 80
+you can add it to profile file, such as .bash_profile or /etc/profile
 
-env PHP_FPM_TSAR_URI
+ 	 > export PHP_FPM_TSAR_HOST=192.168.0.1
 
-    uri = PHP_FPM_TSAR_URI ?: "/php-fpm-status"
 
-    #### modify env 
-
-	> export PHP_FPM_TSAR_HOST=192.168.0.1
 
  
-2. Stub Status module must be included,and add configuration as below:
+###2. Stub Status module must be included,and add configuration as below:
 
-    
-    location = /php-fpm-status {
+<pre>
+   location = /php-fpm-status {
         access_log off;
         allow 127.0.0.1;
         deny all;
@@ -60,12 +69,15 @@ env PHP_FPM_TSAR_URI
         fastcgi_pass   php_fpm_status_upstream;
         fastcgi_param  SCRIPT_FILENAME  $fastcgi_script_name;
     }
+</pre>
 
-    if you open assess_log ,then the access_log-xxx will have the log as after log.
+if you open assess_log ,then the access_log-xxx will have the log as after log.
 
-     127.0.0.1 - - [23/Mar/2017:16:35:30 +0800] "GET /php-fpm-status HTTP/1.0" 200 395 "-" "/1.9" "-" 0.003 "-" "CgALVdKI01j4sQAAxwEAAA--" "1tebjflet5ug4flu&1&uo" "-"
+>
 
-3. We can also using unix domain socket, if we set PHP_FPM_TSAR_HOST to a filesystem path:
+    >  127.0.0.1 - - [23/Mar/2017:16:35:30 +0800] "GET /php-fpm-status HTTP/1.0" 200 395 "-" "/1.9" "-" 0.003 "-" "CgALVdKI01j4sQAAxwEAAA--" "1tebjflet5ug4flu&1&uo" "-"
+
+###3. We can also using unix domain socket, if we set PHP\_FPM\_TSAR\_HOST to a filesystem path:
 
     ####example: 
     >`export PHP_FPM_TSAR_HOST=/tmp/php-fpm-tsar.sock`
@@ -74,7 +86,7 @@ env PHP_FPM_TSAR_URI
    
     >`listen unix:/tmp/php-fpm-tsar.sock;`
 
-4. The uri and server name sent to the php-fpm server can alse be changed:
+###4. The uri and server name sent to the php-fpm server can alse be changed:
 
     ####example: 
     >`export PHP_FPM_TSAR_SERVER_NAME=zhangzhong`
@@ -83,10 +95,10 @@ env PHP_FPM_TSAR_URI
 
 
 
-5. display 
+###5. display 
 
-	shell >  tsar -l --php-fpm
-
+	>  tsar -l --php-fpm
+>
 
 	Time              -----------------------------------------php-fpm----------------------------------------
 	Time              accept   queue    maxq    qlen    idle  active   total  mactiv  mreach   slowR     qps
@@ -96,12 +108,14 @@ env PHP_FPM_TSAR_URI
 
 
 
-6. other
+###6. other
 
+>test curl
 
 curl  "http://127.0.0.1/php-fpm-status" -v
 
 
+<pre>
 * About to connect() to 127.0.0.1 port 80 (#0)
 *   Trying 127.0.0.1...
 * Connected to 127.0.0.1 (127.0.0.1) port 80 (#0)
@@ -148,3 +162,4 @@ ntotal_processes:      305
 nmax_active_processes: 1170
 nmax_children_reached: 0
 nslow_requests:        1
+</pre>
